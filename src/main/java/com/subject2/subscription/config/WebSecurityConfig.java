@@ -2,6 +2,7 @@ package com.subject2.subscription.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,15 +17,16 @@ public class WebSecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                 auth -> auth
-                    // 어떤 경로에 대한 설정인지 코딩
-                    .requestMatchers(
-                        "/users/my-profile"
-                    )
-                    .authenticated()
-                    .requestMatchers(
-                        "/users/login"
-                    )
-                    .anonymous()
+                    .requestMatchers(HttpMethod.PATCH, "/admin/{username}").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/projects").hasAuthority("CREATE")
+                    .requestMatchers(HttpMethod.GET, "/projects/{id}").hasAuthority("READ")
+                    .requestMatchers(HttpMethod.PATCH, "/projects/{id}").hasAuthority("UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/projects/{id}").hasAuthority("DELETE")
+                    // /users/my-profile 경로에는 인증된 사용자만 접근 가능
+                    .requestMatchers("/users/my-profile").authenticated()
+                    // /users/login 경로에는 인증되지 않은(anonymous) 사용자만 접근 가능
+                    .requestMatchers("/users/login").anonymous()
+                    .anyRequest().authenticated()
             )
             .formLogin(
                 formLogin -> formLogin
@@ -32,6 +34,11 @@ public class WebSecurityConfig {
                     .loginPage("/users/login")
                     // 아무 설정 없이 고르인에 성공한 뒤, 이동할 URL
                     .defaultSuccessUrl("/users/my-profile")
+            )
+            .logout(
+                logout -> logout
+                    .logoutUrl("/users/logout")
+                    .permitAll()
             );
 
         return http.build();
