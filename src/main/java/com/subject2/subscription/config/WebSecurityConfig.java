@@ -17,21 +17,21 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(
                 auth -> auth
                     // 어떤 경로에 대한 설정인지 코딩
-                    .requestMatchers("test1")
-                    // 전체 허가
-                    .permitAll()
-                    // 로그인 한 사용자만 사용 가능 API
-                    .requestMatchers("test2")
+                    .requestMatchers(
+                        "/users/my-profile"
+                    )
                     .authenticated()
-                    .anyRequest()
-                    .authenticated()
+                    .requestMatchers(
+                        "/users/login"
+                    )
+                    .anonymous()
             )
             .formLogin(
                 formLogin -> formLogin
                     // // 어떤 경로(URL)로 요청을 보내면 로그인 페이지가 나오는지 결정하는 설정
                     .loginPage("/users/login")
                     // 아무 설정 없이 고르인에 성공한 뒤, 이동할 URL
-                    .defaultSuccessUrl("/users/success")
+                    .defaultSuccessUrl("/users/my-profile")
             );
 
         return http.build();
