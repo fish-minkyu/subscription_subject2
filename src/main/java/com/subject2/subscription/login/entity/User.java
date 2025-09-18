@@ -1,10 +1,14 @@
 package com.subject2.subscription.login.entity;
 
+import com.subject2.subscription.project.entity.Project;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,6 +27,9 @@ public class User {
     // 권한과 역할
     private String authorities; // TODO, 나중에 Entity로 분리
     private Grade grade; // 요금제
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Project> projectList = new ArrayList<>();
 
     public enum Grade {
         BASIC,
