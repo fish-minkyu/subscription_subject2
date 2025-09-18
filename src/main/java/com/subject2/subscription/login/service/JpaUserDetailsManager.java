@@ -1,6 +1,9 @@
-package com.subject2.subscription.login;
+package com.subject2.subscription.login.service;
 
-import lombok.RequiredArgsConstructor;
+import com.subject2.subscription.login.CustomUserDetails;
+import com.subject2.subscription.login.entity.User;
+import com.subject2.subscription.login.entity.User.Grade;
+import com.subject2.subscription.login.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,26 +25,45 @@ public class JpaUserDetailsManager implements UserDetailsManager {
         this.userRepository = userRepository;
 
         // 요구 사항서에 나온 계정 생성
-        // A, 관리자
-        createUser(CustomUserDetails.builder()
-            .username("A")
-            .password(passwordEncoder.encode("a1234"))
-            .build());
-        // B
-        createUser(CustomUserDetails.builder()
-            .username("B")
-            .password(passwordEncoder.encode("b1234"))
-            .build());
-        // C
-        createUser(CustomUserDetails.builder()
-            .username("C")
-            .password("c1234")
-            .build());
-        // D
-        createUser(CustomUserDetails.builder()
-            .username("D")
-            .password("d1234")
-            .build());
+        if (!this.userExists("A")) {
+            // A, 관리자
+            createUser(CustomUserDetails.builder()
+                .username("A")
+                .password(passwordEncoder.encode("a1234"))
+                .authorities("ROLE_ADMIN,CREATE,READ,UPDATE,DELETE")
+                .grade(Grade.PRO)
+                .build());
+        }
+
+        if (!this.userExists("B")) {
+            // B, User
+            createUser(CustomUserDetails.builder()
+                .username("B")
+                .password(passwordEncoder.encode("b1234"))
+                .authorities("ROLE_USER,CREATE,UPDATE,DELETE")
+                .grade(Grade.PRO)
+                .build());
+        }
+
+        if (!this.userExists("C")) {
+            // C, User
+            createUser(CustomUserDetails.builder()
+                .username("C")
+                .password("c1234")
+                .authorities("ROLE_USER,CREATE,DELETE")
+                .grade(Grade.BASIC)
+                .build());
+        }
+
+        if (!this.userExists("D")) {
+            // D, User
+            createUser(CustomUserDetails.builder()
+                .username("D")
+                .password("d1234")
+                .authorities("ROLE_USER,CREATE,READ")
+                .grade(Grade.BASIC)
+                .build());
+        }
     }
 
     @Override
@@ -54,6 +74,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
         return CustomUserDetails.builder()
             .username(loginUser.getUsername())
             .password(loginUser.getPassword())
+            .authorities(loginUser.getAuthorities())
+            .grade(loginUser.getGrade())
             .build();
     }
 

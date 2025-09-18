@@ -1,4 +1,4 @@
-package com.subject2.subscription.login;
+package com.subject2.subscription.login.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
     private String password;
-    private String grade;
 
-    private String authorities;
+    // 권한과 역할
+    private String authorities; // TODO, 나중에 Entity로 분리
+    private Grade grade; // 요금제
+
+    public enum Grade {
+        BASIC,
+        PRO
+    }
 }

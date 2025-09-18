@@ -1,4 +1,4 @@
-package com.subject2.subscription.login;
+package com.subject2.subscription.login.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

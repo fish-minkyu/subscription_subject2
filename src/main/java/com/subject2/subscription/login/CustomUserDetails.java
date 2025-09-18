@@ -1,12 +1,15 @@
 package com.subject2.subscription.login;
 
+import com.subject2.subscription.login.entity.User.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,15 +19,22 @@ import java.util.List;
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
     @Getter
-    private Long userId;
-
     private String username;
     private String password;
+    private Grade grade;
+    private String authorities;
 
-    // null 반환 금지
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        List<GrantedAuthority> grantedAuthorities
+            = new ArrayList<>();
+
+        String[] rawAuthorities = authorities.split(",");
+        for (String rawAuthority : rawAuthorities) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(rawAuthority));
+        }
+
+        return grantedAuthorities;
     }
 
     @Override
@@ -34,6 +44,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.getUsername();
+        return this.username;
     }
 }
