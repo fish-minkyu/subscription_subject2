@@ -36,3 +36,6 @@
 
 ### API 명세서 링크 (Postman)
 https://subject1images.postman.co/workspace/Subject1_Images-Workspace~c69748bb-1997-44ae-8afd-c39a5a82815b/collection/28378931-e8c138f8-aa44-4cb9-a685-421337d405e7?action=share&source=copy-link&creator=28378931
+
+### Postman 문서
+[postman_document](subject2_subscription_eominkyu.json)

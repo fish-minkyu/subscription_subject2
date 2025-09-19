@@ -46,10 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
   ) throws ServletException, IOException {
     log.debug("try jwt filter");
     // 1. Authorization 헤더를 회수
-    String authHeader
-      // = request.getHeader("Authorization");
-      // : "Authorization"을 자주 써서 상수로 만들어줬다.
-    = request.getHeader(HttpHeaders.AUTHORIZATION);
+    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
     // 2. Authorization 헤더가 존재하는지 + Bearer로 시작하는지
     if (authHeader != null && authHeader.startsWith("Bearer")) {

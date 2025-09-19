@@ -15,7 +15,7 @@ import java.time.Instant;
 
 // JWT 자체와 관련된 기능을 만드는 곳
 @Slf4j
-@Component // 직접적인 비즈니스 로직보단 여러가지 기능을 담아놓는 클래스라고 생각해서 Service 대신 Component를 넣어줬다.
+@Component
 public class JwtTokenUtils {
   // JWT를 만드는 용도의 암호키
   private final Key signingKey;
@@ -23,8 +23,6 @@ public class JwtTokenUtils {
   private final JwtParser jwtParser; // parser: 특정한 형식의 문자열을 데이터로 다시 역직렬화하는 것
 
   public JwtTokenUtils(
-    // @Value <- Spring의 Value이 필요하다. (Lombok 아님)
-    // : 해당 이름에 해당하는 설정을 가져올 수 있다.
     @Value("${jwt.secret}")
     String jwtSecret
   ) {
