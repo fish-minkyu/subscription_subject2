@@ -1,5 +1,6 @@
 package com.subject2.subscription.login.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.subject2.subscription.project.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,6 +28,7 @@ public class User {
     private Grade grade; // 요금제
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @JsonIgnore
     private List<Project> projectList = new ArrayList<>();
 
     public enum Grade {

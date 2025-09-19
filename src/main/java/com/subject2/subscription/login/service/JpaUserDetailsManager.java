@@ -49,7 +49,7 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             // C, User
             createUser(CustomUserDetails.builder()
                 .username("C")
-                .password("c1234")
+                .password(passwordEncoder.encode("c1234"))
                 .authorities("ROLE_USER,CREATE,DELETE")
                 .grade(Grade.BASIC)
                 .build());
@@ -59,7 +59,7 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             // D, User
             createUser(CustomUserDetails.builder()
                 .username("D")
-                .password("d1234")
+                .password(passwordEncoder.encode("d1234"))
                 .authorities("ROLE_USER,CREATE,READ")
                 .grade(Grade.BASIC)
                 .build());
@@ -90,6 +90,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             User newUser = User.builder()
                 .username(userDetails.getUsername())
                 .password(userDetails.getPassword())
+                .authorities(userDetails.getRawAuthorities())
+                .grade(userDetails.getGrade())
                 .build();
 
             userRepository.save(newUser);

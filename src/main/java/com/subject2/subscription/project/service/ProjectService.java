@@ -3,6 +3,7 @@ package com.subject2.subscription.project.service;
 import com.subject2.subscription.login.AuthenticationFacade;
 import com.subject2.subscription.login.entity.User;
 import com.subject2.subscription.login.repository.UserRepository;
+import com.subject2.subscription.project.dto.ProjectDto;
 import com.subject2.subscription.project.entity.Project;
 import com.subject2.subscription.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class ProjectService {
     private final AuthenticationFacade auth;
 
     @Transactional
-    public void createProject(Project project) {
+    public ProjectDto createProject(Project project) {
         // 중복 방지
         Optional<Project> existProject = projectRepository.findByName(project.getName());
         if (existProject.isPresent()) {
@@ -46,11 +47,13 @@ public class ProjectService {
             .user(user) // 담당자는 곧 로그인한 유저다.
             .build();
 
-        projectRepository.save(newProject);
+        Project saveEntity = projectRepository.save(newProject);
+        return ProjectDto.fromEntity(saveEntity);
     }
 
-    public Project readProject(Long projectId) {
-        // 권한 설정 생각 필요
+    public ProjectDto readProject(Long projectId) {
+        // 인증 확인
+        User user = auth.getAuth();
 
         Project targetProject = projectRepository.findByProjectId(projectId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 프로젝트가 존재하지 않습니다."));
@@ -58,12 +61,13 @@ public class ProjectService {
         Long doing = projectRepository.searchProjectCountByStatus("DOING");
         targetProject.setDoing(doing);
 
-        return targetProject;
+        return ProjectDto.fromEntity(targetProject);
     }
 
     @Transactional
-    public void updateProject(Long projectId, Project project) {
-        // 권한 설정 생각 필요
+    public ProjectDto updateProject(Long projectId, Project project) {
+        // 인증 확인
+        User user = auth.getAuth();
 
         Project targetProject = projectRepository.findByProjectId(projectId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 프로젝트가 존재하지 않습니다."));
@@ -89,11 +93,14 @@ public class ProjectService {
         }
 
         // DB 수정
-        projectRepository.save(targetProject);
+        Project updateEntity = projectRepository.save(targetProject);
+        return ProjectDto.fromEntity(updateEntity);
     }
 
     public void deleteProject(Long projectId) {
-        // 권한 설정 생각 필요
+        // 인증 확인
+        User user = auth.getAuth();
+
         Project targetProject = projectRepository.findByProjectId(projectId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 프로젝트가 존재하지 않습니다."));
 

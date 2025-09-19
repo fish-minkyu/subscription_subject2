@@ -1,5 +1,6 @@
 package com.subject2.subscription.project.controller;
 
+import com.subject2.subscription.project.dto.ProjectDto;
 import com.subject2.subscription.project.entity.Project;
 import com.subject2.subscription.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +13,18 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public void createProject(@RequestBody Project project) {
-        projectService.createProject(project);
+    public ProjectDto createProject(@RequestBody Project project) {
+        return projectService.createProject(project);
     }
 
     @GetMapping("/{id}")
-    public Project readProject(@PathVariable("id") Long projectId) {
+    public ProjectDto readProject(@PathVariable("id") Long projectId) {
         return projectService.readProject(projectId);
     }
 
     @PatchMapping("/{id}")
-    public void updateProject(@PathVariable("id") Long projectId, @RequestBody Project project) {
-        projectService.updateProject(projectId, project);
+    public ProjectDto updateProject(@PathVariable("id") Long projectId, @RequestBody Project project) {
+        return projectService.updateProject(projectId, project);
     }
 
     @DeleteMapping("/{id}")

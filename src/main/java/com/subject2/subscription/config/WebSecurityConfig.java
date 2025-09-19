@@ -1,14 +1,23 @@
 package com.subject2.subscription.config;
 
+import com.subject2.subscription.jwt.JwtTokenFilter;
+import com.subject2.subscription.jwt.JwtTokenUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+    private final JwtTokenUtils jwtTokenUtils;
+    private final UserDetailsManager manager;
 
     // HTTP 관련 보안 설정하는 객체
     @Bean
@@ -26,19 +35,18 @@ public class WebSecurityConfig {
                     .requestMatchers("/users/my-profile").authenticated()
                     // /users/login 경로에는 인증되지 않은(anonymous) 사용자만 접근 가능
                     .requestMatchers("/users/login").anonymous()
-                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
             )
-            .formLogin(
-                formLogin -> formLogin
-                    // // 어떤 경로(URL)로 요청을 보내면 로그인 페이지가 나오는지 결정하는 설정
-                    .loginPage("/users/login")
-                    // 아무 설정 없이 고르인에 성공한 뒤, 이동할 URL
-                    .defaultSuccessUrl("/users/my-profile")
+            .sessionManagement(
+                session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .logout(
-                logout -> logout
-                    .logoutUrl("/users/logout")
-                    .permitAll()
+            .addFilterBefore(
+                new JwtTokenFilter(
+                    jwtTokenUtils,
+                    manager
+                ),
+                AuthorizationFilter.class
             );
 
         return http.build();

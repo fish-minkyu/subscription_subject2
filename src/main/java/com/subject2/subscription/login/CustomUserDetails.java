@@ -21,8 +21,14 @@ public class CustomUserDetails implements UserDetails {
     @Getter
     private String username;
     private String password;
+    @Getter
     private Grade grade;
     private String authorities;
+
+    // getAuthorities 메소드가 이미 있어서 따로 만듬
+    public String getRawAuthorities() {
+        return this.authorities;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
